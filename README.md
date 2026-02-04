@@ -310,12 +310,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Takuma Morimoto, Robert J. Lee, and Hannah E. Smithson, "When the brightest is not the best: illuminant estimation from the geometry of specular highlights". bioRxiv. https://doi.org/10.64898/2026.01.22.700600
-
 ---
 
 ## Contact
-
-Takuma Morimoto, takuma.morimoto@psy.ox.ac.uk
 
 ---
