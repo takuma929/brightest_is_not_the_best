@@ -203,6 +203,7 @@ end
 % Save
 % -------------------------------------------------------------------------
 save(fullfile(dataDir, 'dprime_human.mat'), 'dprime', 'C', 'observerIDs');
+disp(['Successfully saved: ',fullfile(dataDir, 'dprime_human.mat')])
 
 %% ========================================================================
 % Local functions

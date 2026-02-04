@@ -132,8 +132,8 @@ Ref = material(:, 2:241);  % [nRef x 240]
 
 % Multiply reflectance by illuminant SPD (energy), then convert to MB coordinates.
 % SPD vectors are expected to align with the 240-sample reflectance grid.
-MB_Sunlight = spectralvectortoMBandRGB_400to700nm((Ref .* repmat(sunlight_raw(:,2), 1, 240))');
-MB_Skylight = spectralvectortoMBandRGB_400to700nm((Ref .* repmat(skylight_raw(:,2), 1, 240))');
+MB_Sunlight = spectralvectortoMB_400to700nm((Ref .* repmat(sunlight_raw(:,2), 1, 240))');
+MB_Skylight = spectralvectortoMB_400to700nm((Ref .* repmat(skylight_raw(:,2), 1, 240))');
 
 %% ------------------------------------------------------------------------
 % Helper: apply consistent axis cosmetics for MB plots
