@@ -1,7 +1,7 @@
 % script to save parameters for figure generation
 repo_basedir = pwd;
-figp.twocolumn = 17.8; % size for for two-column figure (Journal of Vision)
-figp.onecolumn = figp.twocolumn/2; % size for for one-column figure (Journal of Vision)
+figp.twocolumn = 17.8; % size for for two-column figure
+figp.onecolumn = figp.twocolumn/2; % size for for one-column figure
 
 figp.fontsize = 7; % fontsize for general use
 figp.fontsize_axis = 8; % fontsize for axis label
