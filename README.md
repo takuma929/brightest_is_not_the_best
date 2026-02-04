@@ -11,10 +11,9 @@ This repository contains raw behavioural data and MATLAB code to reproduce the m
 * [Requirements](#requirements)
 * [Quick start](#quick-start)
 * [Raw data format](#raw-data-format)
-* [Data files in `data/`](#data-files-expected-in-data)
-* [Code overview (file-by-file)](#code-overview-file-by-file)
+* [Files in `data/`](#data-files-expected-in-data)
+* [Code overview](#code-overview-file-by-file)
 * [Outputs](#outputs)
-* [Notes and common pitfalls](#notes-and-common-pitfalls)
 * [License / citation](#license--citation)
 * [Contact](#contact)
 
@@ -113,7 +112,7 @@ rawdata/AKH/AKH_1-1.mat
 
 ### Variables inside each raw-data `.mat` file
 
-Each raw-data file is expected to contain **exactly these variables** (this is what `analysis_dprimeANDC.m` loads):
+Each raw-data file contains **variables below** (loaded in `analysis_dprimeANDC.m`):
 
 | Variable   |           Type |                              Size (per block) | Meaning                                                                                          |
 | ---------- | -------------: | --------------------------------------------: | ------------------------------------------------------------------------------------------------ |
@@ -121,7 +120,7 @@ Each raw-data file is expected to contain **exactly these variables** (this is w
 | `correct`  | numeric vector |                          `trialsPerBlock × 1` | Correctness per trial (`1 = correct`, `0 = incorrect`).                                          |
 | `stimList` |         struct | fields are vectors of length `trialsPerBlock` | Trial metadata (condition/stimulus/trial type).                                                  |
 
-`stimList` must contain the following fields:
+`stimList` contains the following fields:
 
 | `stimList` field      | Type           | Meaning                                                                                                         |
 | --------------------- | -------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -130,42 +129,35 @@ Each raw-data file is expected to contain **exactly these variables** (this is w
 | `stimList.changeType` | numeric vector | Ground-truth trial type: `1 = "RefChange"` (noise) and `2 = "IllChange"` (signal). |
 
 
-## Data files in `data/`
+## Files in `data/`
 
-Some scripts expect additional supporting files in `./data/`. These are not created automatically unless noted.
+Some scripts expect additional supporting files in `./data/`.
 
 | File                              | Produced by             | Used by                           | Purpose                                                                          |
 | --------------------------------- | ----------------------- | --------------------------------- | -------------------------------------------------------------------------------- |
 | `fig_params.mat`                  | `set_figParameters.m`   | `fig2ab.m`, `fig4_5_dprime_C.m`   | Shared figure size/font settings.         |
 | `separated_idx.mat`               | (provided)              | `analysis_dprimeANDC.m`           | Defines which `stimn` belong to aligned vs separated conditions.                 |
-| `dprime_human.mat`                | `analysis_dprimeANDC.m` | `fig4_5_dprime_C.m`               | Human SDT results (`dprime` and criterion `C`).                                  |
-| `dprime_models.mat`               | (provided)              | `fig4_5_dprime_C.m`               | Model SDT results (expected structure described in that script).                 |
+| `dprime_human.mat`                | `analysis_dprimeANDC.m` | `fig4_5_dprime_C.m`               | Human results (`dprime` and criterion `C`).                                  |
+| `dprime_models.mat`               | (provided)              | `fig4_5_dprime_C.m`               | Model results (expected structure described in that script).                 |
 | `material.mat`                    | (provided)              | `fig2ab.m`                        | Reflectance spectra (used to compute chromatic directions).                      |
 | `sunlight.spd`, `skylight.spd`    | (provided)              | `fig2ab.m`                        | Illuminant SPDs as 2-column text files: wavelength (nm), energy.                 |
 | `ill_ref_change_material_idx.mat` | (provided)              | `fig2ab.m`                        | Index pairs defining reflectance-change and illuminant-change comparisons.       |
-| `lms_400to700.mat`                | (provided)              | `spectralvectortoMB_400to700nm.m` | LMS sensitivities sampled from 400–700 nm (used for MacLeod–Boynton conversion). |
+| `lms_400to700.mat`                | (provided)              | `spectralvectortoMB_400to700nm.m` | Stockman & Sharpe 2-deg LMS sensitivities sampled from 400–700 nm (used for MacLeod–Boynton conversion). |
 
 ---
 
-## Code overview (file-by-file)
+## Code overview
 
 ### `main.m`
 
 A convenience "run everything" entry point.
 
-It currently calls:
+It calls:
 
 ```matlab
 analysis_dprimeANDC
 fig2ab
 fig4_5_dprime_Cd
-```
-
-⚠️ **Note:** the repository contains `fig4_5_dprime_C.m`, but `main.m` calls `fig4_5_dprime_Cd` (extra `d`).
-To use `main.m` as-is, either rename the function call or update the last line to:
-
-```matlab
-fig4_5_dprime_C
 ```
 
 ---
@@ -182,7 +174,6 @@ Computes **signal detection metrics** for human observers:
   * Hits / Misses / False Alarms / Correct Rejections
   * *d′* = `Z(H) − Z(FA)`
   * criterion *C* = `−0.5 × (Z(H) + Z(FA))`
-* Clips rates away from 0 and 1 (epsilon = `1e-5`) to avoid infinite `norminv`.
 
 **Output:**
 
@@ -196,7 +187,7 @@ Computes **signal detection metrics** for human observers:
 
 ### `fig2ab.m`
 
-Generates **three vector PDF figures**:
+Generates **vector PDF figures**:
 
 1. `fig_sunlight_skylight.pdf`
    Plots and compares normalized SPDs of sunlight vs skylight.
@@ -207,7 +198,7 @@ Generates **three vector PDF figures**:
 3. `fig_chromatic_direction_illchange.pdf`
    Plots chromatic direction segments for **illuminant-change** trials in MacLeod–Boynton space.
 
-Key steps:
+Steps:
 
 * Loads `material.mat` reflectance spectra.
 * Loads `sunlight.spd` and `skylight.spd`.
@@ -221,7 +212,7 @@ Key steps:
 
 ### `fig4_5_dprime_C.m`
 
-Generates publication-ready plots of:
+Generates plots of:
 
 * Human *d′* (group mean + individual observers)
 * Model *d′* (multiple observer models; also includes filter/pixel size effects)
@@ -234,7 +225,7 @@ Generates publication-ready plots of:
 * `data/dprime_models.mat`
 
 **Model expectations (structure):**
-The script expects fields like:
+The script fields are like:
 
 * `rslt_models.dprime_avg.Aligned.<ModelName>.f_pixel1`
 * `rslt_models.dprime_avg.Separated.<ModelName>.f_pixel1`
@@ -274,7 +265,7 @@ Converts spectra sampled over **400–700 nm** into MacLeod–Boynton–style co
 
   * `MB_vector(:,1)` = `L/(L+M)` (weighted)
   * `MB_vector(:,2)` = `S/(L+M)` (weighted)
-  * `MB_vector(:,3)` = luminance-like term (`Lw*L + Mw*M`)
+  * `MB_vector(:,3)` = Relative luminance (`Lw*L + Mw*M`)
 
 ---
 
@@ -297,9 +288,29 @@ Scripts generate:
 
 ## License / citation
 
-Please add a `LICENSE` file before public release.
+MIT License
 
-If you want the repository to be citable, consider adding a `CITATION.cff` file as well.
+Copyright (c) 2026 Takuma Morimoto
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Takuma Morimoto, Robert J. Lee, and Hannah E. Smithson, "When the brightest is not the best: illuminant estimation from the geometry of specular highlights". bioRxiv. https://doi.org/10.64898/2026.01.22.700600
 
 ---
 
